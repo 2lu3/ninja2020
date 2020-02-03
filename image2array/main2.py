@@ -90,9 +90,18 @@ def main():
         "paint_button_labels": paint_button_labels,
         "edit_mode_button_labels": edit_mode_button_labels,
     }
+    on_click_functions = {
+        "on_click_paint_button": on_click_paint_button,
+        "on_click_edit_mode_button": on_click_edit_mode_button,
+        "on_click_output_button": on_click_output_button,
+        "on_click_load_button": on_click_load_button,
+        "on_click_image": on_click_image,
+        "on_release_image": on_release_image,
+        "on_motion_image": on_motion_image,
+    }
     tkinter_user_face = TkinterUserFace(prms)
 
-    tkinter_user_face.tkinter_setup("image 2 array",)
+    tkinter_user_face.tkinter_setup("image 2 array", on_click_functions)
 
 
 if __name__ == "__main__":
