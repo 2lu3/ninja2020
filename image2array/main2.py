@@ -7,6 +7,8 @@ import numpy as np
 
 from my_module.tkinter import TkinterUserFace
 
+# 画面上で表示したい画像の大きさ
+display_width, display_height = 720, 540
 # 処理したい最小単位(最終的に36x27にする場合でも、360x270の解像度で操作したいとき)
 image_width, image_height = 360, 270
 # 出力したい配列の大きさ(image_widthの約数でなければならない)
@@ -42,31 +44,37 @@ def apply_image_changes_to_map(image, registered_color):
     pass
 
 
-def on_click_load_button():
+# ロードボタンが押されたとき
+def on_click_load_button(event):
     pass
 
 
-def on_click_output_button():
+# 出力ボタンが押されたとき
+def on_click_output_button(event):
     pass
 
 
-def on_click_paint_button():
+# [White, Yellow, Wall ...]が書かれているボタンが押されたとき
+def on_click_paint_button(event):
     pass
 
 
-def on_click_edit_mode_button():
+# [床情報、RED, CYAN, BLACK]が書かれているボタンが押されたとき
+def on_click_edit_mode_button(event):
     pass
 
 
-def on_click_image():
+# 画像のどこが押されたとき
+def on_click_image(x, y):
     pass
 
 
-def on_release_image():
+# 画像のどこかを押し、その後マウスのクリックを外したとき
+def on_release_image(start_x, start_y, end_x, end_yi):
     pass
 
 
-def on_motion_image():
+def on_motion_image(x, y):
     pass
 
 
@@ -85,8 +93,8 @@ def main():
     edit_mode_button_labels = ["床情報", "Red", "Cyan", "Black"]
 
     prms = {
-        "image_width": 360,
-        "image_height": 270,
+        "display_width": display_width,
+        "display_height": display_height,
         "paint_button_labels": paint_button_labels,
         "edit_mode_button_labels": edit_mode_button_labels,
     }

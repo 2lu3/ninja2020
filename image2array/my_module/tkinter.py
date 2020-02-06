@@ -3,12 +3,50 @@ import tkinter as tk
 from my_module.image import read_image
 
 
+# UIの設定を司るクラス
+class TkinterSetup:
+    def __init__(self, tk_root, tk_canvas):
+        self.root = tk_root
+        self.canvas = tk_canvas
+
+    # 四角形の線を表示する
+    def add_square_line(self, left_x, top_y, right_x, bottom_y, line_width=1):
+        self.canvas.create_rectangle(
+            left_x, top_y, right_x, bottom_y, outline="black", width=line_width
+        )
+
+    def set_list_button(self, button_texts, on_click_function, place_position):
+        # ボタンのクラスを作成
+        list_button = tk.Listbox(self.root, height=len(button_texts))
+
+        for text in button_texts:
+            # ボタンの名前を末尾(tk.END)に追加
+            list_button.insert(tk.END, text)
+
+        # 初期状態で選択されているボタンは0番目のもの
+        list_button.select_set(0)
+        # ボタンが押されたときに呼ばれる関数を設定
+        list_button.bind("<ButtonRelease-1>", on_click_function)
+        # ボタンを画面上のどこに配置するか
+        list_button.place(x=place_position[0], y=place_position[1])
+
+    def set_single_button(self, button_text, on_click_function, place_position):
+        # ボタンのクラスを作成
+        button = tk.Button(self.root, text=button_text)
+        # クリックされたときに呼ばれる関数を設定
+        button.bind("<Button-1>", on_click_function)
+        # ボタンを配置する座標を指定
+        button.place(x=place_position[0], y=place_position[1])
+
+
+# クリックされたときの動作を指定
 class TkinterUserFace:
     def __init__(self, parameters):
+        self.tkinter_ui = TkinterSetup()
         # 画像の横幅
-        self.image_width = parameters.pop("image_width")
+        self.display_width = parameters.pop("display_width")
         # 画像の縦幅
-        self.image_height = parameters.pop("image_height")
+        self.display_height = parameters.pop("display_height")
         # ボタン同士の隙間
         if "ui_margin" in parameters:
             self.ui_margin = parameters.pop("ui_margin")
@@ -29,67 +67,37 @@ class TkinterUserFace:
         # 四角形の選択範囲のクリックを外した座標
         self.end_x = self.end_y = -1
 
-    def set_buttons(self, **parameters):
-        def set_list_button(button_texts, on_click_function, place_position):
-            # ボタンのクラスを作成
-            list_button = tk.Listbox(self.root, height=len(button_texts))
-
-            for text in button_texts:
-                # ボタンの名前を末尾(tk.END)に追加
-                list_button.insert(tk.END, text)
-
-            # 初期状態で選択されているボタンは0番目のもの
-            list_button.select_set(0)
-            # ボタンが押されたときに呼ばれる関数を設定
-            list_button.bind("<ButtonRelease-1>", on_click_function)
-            # ボタンを画面上のどこに配置するか
-            list_button.place(x=place_position[0], y=place_position[1])
-
-        def set_single_button(button_text, on_click_function, place_position):
-            button = tk.Button(self.root, text=button_text)
-            button.bind("<Button-1>", on_click_function)
-            button.place(x=place_position[0], y=place_position[1])
-
-        on_click_paint_button = parameters.pop("paint")
-        on_click_edit_mode_button = parameters.pop("edit_mode")
-        on_click_output_button = parameters.pop("output")
-        on_click_load_button = parameters.pop("load")
-
+    def set_paint_mode_button(self, on_click_function):
         # どの種類の物体をマップ上に追加するかを選択するボタンの設定
-        x = self.image_width + self.ui_margin * 2
+        x = self.display_width + self.ui_margin * 2
         y = self.ui_margin * 1
-        set_list_button(self.paint_button_labels, on_click_paint_button, (x, y))
-
-        # 表示・設定のモードを変更するボタンを設定
-        # 例:Red,Cyan,Black Objectの設定
-        x = self.image_width + self.ui_margin * 2
-        y = self.ui_margin * (len(self.paint_button_labels) + 2)
-        set_list_button(self.edit_mode_button_labels, on_click_edit_mode_button, (x, y))
-
-        # 出力ボタンの設定
-        x = self.image_width + self.ui_margin * 2
-        y = self.ui_margin * (len(self.paint_button_labels) + 8)
-        set_single_button("出力", on_click_output_button, (x, y))
-
-        # ロードボタンの設定
-        x = self.image_width + self.ui_margin * 2
-        y = self.ui_margin * (len(self.paint_button_labels) + 10)
-        set_single_button("ロード", on_click_load_button, (x, y))
-
-    # 画像の周りに黒い線を表示する
-    def add_line_around_image(self):
-        line_margin = 2
-        self.canvas.create_rectangle(
-            self.ui_margin - line_margin / 2,
-            self.ui_margin - line_margin / 2,
-            self.image_width + self.ui_margin + line_margin / 2,
-            self.image_height + self.ui_margin + line_margin / 2,
-            outline="black",
-            width=line_margin,
+        self.tkinter_ui.set_list_button(
+            self.paint_button_labels, on_click_function, (x, y)
         )
 
+    def set_edit_mode_button(self, on_click_function):
+        # 表示・設定のモードを変更するボタンを設定
+        # 例:Red,Cyan,Black Objectの設定
+        x = self.display_width + self.ui_margin * 2
+        y = self.ui_margin * (len(self.paint_button_labels) + 2)
+        self.tkinter_ui.set_list_button(
+            self.edit_mode_button_labels, on_click_function, (x, y)
+        )
+
+    def set_output_button(self, on_click_function):
+        # 出力ボタンの設定
+        x = self.display_width + self.ui_margin * 2
+        y = self.ui_margin * (len(self.paint_button_labels) + 8)
+        self.tkinter_ui.set_single_button("出力", on_click_function, (x, y))
+
+    def set_load_button(self, on_click_function):
+        # ロードボタンの設定
+        x = self.display_width + self.ui_margin * 2
+        y = self.ui_margin * (len(self.paint_button_labels) + 10)
+        self.tkinter_ui.set_single_button("ロード", on_click_function, (x, y))
+
     # 画像の任意の点をクリックされたときに呼ばれる関数を設定する
-    def set_image_on_click_listener(self, on_click, on_release, on_motion):
+    def set_display_on_click_listener(self, on_click, on_release, on_motion):
         # マウスでクリックをしたときに呼ばれる関数
         def on_click_image(event):
             # クリックされた座標を記録
@@ -121,7 +129,7 @@ class TkinterUserFace:
                 moving_x,
                 moving_y,
                 width=1,
-                outline=1,
+                outline="black",
                 tag="selected_rectangle",
             )
             # main.py側の関数を呼ぶ
@@ -136,7 +144,9 @@ class TkinterUserFace:
 
     # 画像を表示
     def set_image(self):
-        self.image = read_image(self.image_width, self.image_height)
+        # 画像の読み込み
+        self.image = read_image(self.display_width, self.display_height)
+        # 画像を、(self.ui_margin, self.ui_margin)の場所に設置する
         self.canvas.create_image(
             self.ui_margin, self.ui_margin, image=self.image, anchor=tk.NW
         )
@@ -150,9 +160,9 @@ class TkinterUserFace:
         # 画面の大きさの設定
         self.canvas = tk.Canvas(
             self.root,
-            width=self.image_width + self.ui_margin * 2 + self.paint_button_width,
-            height=self.image_height + self.ui_margin * 2,
-            bg="white",
+            width=self.display_width + self.ui_margin * 2 + self.paint_button_width,
+            height=self.display_height + self.ui_margin * 2,
+            bg="white",  # background
         )
         # コンパイルする
         self.canvas.pack()
@@ -161,9 +171,18 @@ class TkinterUserFace:
         self.set_image()
 
         # 画像の周りに黒い線を描画する(画像の端が白色の場合、境界線がわからない)
-        self.add_line_around_image()
+        self.tkinter_ui.add_square_line(
+            left_x=self.ui_margin,
+            top_y=self.ui_margin,
+            right_x=self.display_width + self.ui_margin,
+            bottom_y=self.display_height + self.ui_margin,
+        )
 
         # ボタンを押されたときに実行する関数を設定
+        self.set_paint_mode_button(on_click_functions["on_click_paint_button"])
+        self.set_edit_mode_button(on_click_functions["on_click_edit_mode_button"])
+        self.set_load_button(on_click_functions["on_click_load_button"])
+        self.set_output_button(on_click_functions["on_click_load_button"])
         self.set_buttons(
             paint=on_click_functions["on_click_paint_button"],
             edit_mode=on_click_functions["on_click_edit_mode_button"],
@@ -172,7 +191,7 @@ class TkinterUserFace:
         )
 
         # 画像上をクリックされたときに実行する関数を設定
-        self.set_image_on_click_listener(
+        self.set_display_on_click_listener(
             on_click=on_click_functions["on_click_image"],
             on_release=on_click_functions["on_release_image"],
             on_motion=on_click_functions["on_motion_image"],
@@ -180,4 +199,3 @@ class TkinterUserFace:
 
         # arduinoでいうloop関数を実行する
         self.root.mainloop()
-
