@@ -42,7 +42,6 @@ class TkinterSetup:
 # クリックされたときの動作を指定
 class TkinterUserFace:
     def __init__(self, parameters):
-        self.tkinter_ui = TkinterSetup()
         # 画像の横幅
         self.display_width = parameters.pop("display_width")
         # 画像の縦幅
@@ -167,6 +166,8 @@ class TkinterUserFace:
         # コンパイルする
         self.canvas.pack()
 
+        self.tkinter_ui = TkinterSetup(self.root, self.canvas)
+
         # 画像の設置
         self.set_image()
 
@@ -183,12 +184,6 @@ class TkinterUserFace:
         self.set_edit_mode_button(on_click_functions["on_click_edit_mode_button"])
         self.set_load_button(on_click_functions["on_click_load_button"])
         self.set_output_button(on_click_functions["on_click_load_button"])
-        self.set_buttons(
-            paint=on_click_functions["on_click_paint_button"],
-            edit_mode=on_click_functions["on_click_edit_mode_button"],
-            output=on_click_functions["on_click_output_button"],
-            load=on_click_functions["on_click_load_button"],
-        )
 
         # 画像上をクリックされたときに実行する関数を設定
         self.set_display_on_click_listener(
