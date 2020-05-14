@@ -39,7 +39,7 @@ class TkinterSetup:
         button.place(x=place_position[0], y=place_position[1])
 
 
-# クリックされたときの動作を指定
+# Tkinterを操作するClass
 class TkinterUserFace:
     def __init__(self, parameters):
         # 画像の横幅
@@ -56,10 +56,8 @@ class TkinterUserFace:
             self.paint_button_width = parameters.pop("button_margin")
         else:
             self.paint_button_width = 120
-        # 選択部分の種類(Yelow, Swamplandなど)を決定
+        # 選択部分の種類(Yellow, Swamplandなど)を決定
         self.paint_button_labels = parameters.pop("paint_button_labels")
-        # [Red, Cyan, Black, 床情報]などの、編集するモード
-        self.edit_mode_button_labels = parameters.pop("edit_mode_button_labels")
 
         # 四角形の選択範囲のクリック座標
         self.start_x = self.start_y = -1
@@ -72,15 +70,6 @@ class TkinterUserFace:
         y = self.ui_margin * 1
         self.tkinter_ui.set_list_button(
             self.paint_button_labels, on_click_function, (x, y)
-        )
-
-    def set_edit_mode_button(self, on_click_function):
-        # 表示・設定のモードを変更するボタンを設定
-        # 例:Red,Cyan,Black Objectの設定
-        x = self.display_width + self.ui_margin * 2
-        y = self.ui_margin * (len(self.paint_button_labels) + 2)
-        self.tkinter_ui.set_list_button(
-            self.edit_mode_button_labels, on_click_function, (x, y)
         )
 
     def set_output_button(self, on_click_function):
@@ -142,7 +131,7 @@ class TkinterUserFace:
         self.canvas.bind("<B1-Motion>", on_motion_image)
 
     # 画像を表示
-    def set_image(self):
+    def __set_default_image(self):
         # 画像の読み込み
         self.image = read_image(self.display_width, self.display_height)
         # 画像を、(self.ui_margin, self.ui_margin)の場所に設置する
@@ -150,10 +139,10 @@ class TkinterUserFace:
             self.ui_margin, self.ui_margin, image=self.image, anchor=tk.NW
         )
 
-    def tkinter_setup(self, title, on_click_functions):
-        # ソフト作成
+    def start(self, title, on_click_functions):
+        # ソフトを作成する
         self.root = tk.Tk()
-        # ソフト名
+        # ソフト名を設定
         self.root.title("image 2 array")
 
         # 画面の大きさの設定
@@ -169,7 +158,7 @@ class TkinterUserFace:
         self.tkinter_ui = TkinterSetup(self.root, self.canvas)
 
         # 画像の設置
-        self.set_image()
+        self.__set_default_image()
 
         # 画像の周りに黒い線を描画する(画像の端が白色の場合、境界線がわからない)
         self.tkinter_ui.add_square_line(
@@ -181,7 +170,6 @@ class TkinterUserFace:
 
         # ボタンを押されたときに実行する関数を設定
         self.set_paint_mode_button(on_click_functions["on_click_paint_button"])
-        self.set_edit_mode_button(on_click_functions["on_click_edit_mode_button"])
         self.set_load_button(on_click_functions["on_click_load_button"])
         self.set_output_button(on_click_functions["on_click_load_button"])
 

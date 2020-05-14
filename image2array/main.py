@@ -93,7 +93,7 @@ def onClickLoadData(event):
     ]
     width = int(image_width / magnification)
     height = int(image_height / magnification)
-    with open("output.txt", mode="r") as f:
+with open("output.txt", mode="r") as f:
         line = []
         for i in range(height + 1):
             line.append(f.readline().split())
