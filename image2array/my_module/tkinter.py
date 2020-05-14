@@ -216,7 +216,7 @@ class TkinterUserFace:
             self.display_width + self.ui_margin * 2,
             self.ui_margin * (len(self.paint_button_labels) + 10))
         self.tkinter_ui.set_output_button(
-            on_click_functions["on_click_load_button"],
+            on_click_functions["on_click_output_button"],
             self.display_width + self.ui_margin * 2,
             self.ui_margin * (len(self.paint_button_labels) + 8))
 

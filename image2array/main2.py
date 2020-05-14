@@ -32,8 +32,8 @@ parameters = {
 tkinter_user_face = TkinterUserFace(parameters)
 
 
-
 paint_number = 0
+floor_color_num = 6
 registered_color = [
     [255, 255, 255],  # white
     [255, 255, 0],  # yellow
@@ -55,7 +55,26 @@ def on_click_load_button(event):
 
 # 出力ボタンが押されたとき
 def on_click_output_button(event):
-    pass
+    print("output")
+    output_array = np.zeros((4, output_height, output_width))
+    images = [tkinter_user_face.get_image(image_type) for image_type in [
+        "floor", "red", "cyan", "black"]]
+    for image_index, image in enumerate(images):
+        color_distances = []
+        for color in range(floor_color_num):
+            image = cv2.resize(cv2.cvtColor(
+                image, cv2.COLOR_RGB2BGR), (output_width, output_height))
+            color_distances.append(
+                np.sum((image - registered_color[color]) ** 2, axis=2))
+        for w in range(output_width):
+            for h in range(output_height):
+                minimum = min([color_distances[i][h, w]
+                               for i in range(floor_color_num)])
+                for i in range(floor_color_num):
+                    if color_distances[i][h, w] == minimum:
+                        output_array[image_index][h, w] = i
+        np.savetxt("output" + str(image_index) +
+                   ".txt", output_array[image_index], fmt="%d")
 
 
 # [White, Yellow, Wall .... RED, CYAN, BLACK]が書かれているボタンが押されたとき
@@ -68,7 +87,6 @@ def on_click_paint_button(pushed_button_number):
 
 
 def on_click_image(x, y):
-    print("start", x, y)
     pass
 
 
@@ -79,14 +97,13 @@ def on_motion_image(x, y):
 
 # 画像のどこかを押し、その後マウスのクリックを外したとき
 def on_release_image(event, start_x, start_y, end_x, end_y):
-    print("end", start_x, start_y, end_x, end_y)
-    if paint_number < 6:  # 床情報
+    if paint_number < floor_color_num:  # 床情報
         image_type = "floor"
-    elif paint_number == 6:  # red
+    elif paint_number == floor_color_num:  # red
         image_type = "red"
-    elif paint_number == 7:  # cyan
+    elif paint_number == floor_color_num + 1:  # cyan
         image_type = "cyan"
-    elif paint_number == 8:  # black
+    elif paint_number == floor_color_num + 2:  # black
         image_type = "black"
     image = tkinter_user_face.get_image(image_type)
 
@@ -97,7 +114,6 @@ def on_release_image(event, start_x, start_y, end_x, end_y):
 
 
 def main():
-
     on_click_functions = {
         "on_click_paint_button": on_click_paint_button,
         "on_click_output_button": on_click_output_button,
