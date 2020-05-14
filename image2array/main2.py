@@ -6,6 +6,7 @@ import cv2
 import numpy as np
 
 from my_module.tkinter import TkinterUserFace
+from tkinter import messagebox
 
 # 画面上で表示したい画像の大きさ
 display_width, display_height = 720, 540
@@ -50,6 +51,7 @@ registered_color = [
 # ロードボタンが押されたとき
 # 出力された配列の情報から画像を復元し、編集できるようにする
 def on_click_load_button(event):
+    messagebox.showinfo("warning", "this function is comming soon")
     pass
 
 
@@ -73,7 +75,7 @@ def on_click_output_button(event):
                 for i in range(floor_color_num):
                     if color_distances[i][h, w] == minimum:
                         output_array[image_index][h, w] = i
-        np.savetxt("output" + str(image_index) +
+        np.savetxt("output_array" + str(image_index) +
                    ".txt", output_array[image_index], fmt="%d")
 
 
