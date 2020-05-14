@@ -12,6 +12,28 @@ display_width, display_height = 720, 540
 # 出力したい配列の大きさ
 output_width, output_height = 36, 27
 
+paint_button_labels = [
+    "White",
+    "Yellow",
+    "Wall",
+    "Swampland",
+    "DepositArea",
+    "SuperArea",
+    "Red",
+    "Cyan",
+    "Black",
+]
+parameters = {
+    "display_width": display_width,
+    "display_height": display_height,
+    "paint_button_labels": paint_button_labels,
+}
+
+tkinter_user_face = TkinterUserFace(parameters)
+
+
+
+paint_number = 0
 registered_color = [
     [255, 255, 255],  # white
     [255, 255, 0],  # yellow
@@ -23,10 +45,6 @@ registered_color = [
     [63, 72, 204],  # cyan
     [0, 0, 0],  # black
 ]
-
-
-def apply_image_changes_to_map(image, registered_color):
-    pass
 
 
 # ロードボタンが押されたとき
@@ -41,46 +59,44 @@ def on_click_output_button(event):
 
 
 # [White, Yellow, Wall .... RED, CYAN, BLACK]が書かれているボタンが押されたとき
-def on_click_paint_button(event):
-    pass
-
+def on_click_paint_button(pushed_button_number):
+    global paint_number
+    paint_number = pushed_button_number
 
 # 画像のどこかが押されたとき
 # 色の範囲選択が始まったとき
+
+
 def on_click_image(x, y):
+    print("start", x, y)
     pass
 
+
 # 画像のどこかを押し、マウスが移動している最中に呼ばれる関数
-
-
 def on_motion_image(x, y):
     pass
 
+
 # 画像のどこかを押し、その後マウスのクリックを外したとき
+def on_release_image(event, start_x, start_y, end_x, end_y):
+    print("end", start_x, start_y, end_x, end_y)
+    if paint_number < 6:  # 床情報
+        image_type = "floor"
+    elif paint_number == 6:  # red
+        image_type = "red"
+    elif paint_number == 7:  # cyan
+        image_type = "cyan"
+    elif paint_number == 8:  # black
+        image_type = "black"
+    image = tkinter_user_face.get_image(image_type)
 
+    cv2.rectangle(image, (start_x, start_y), (end_x, end_y),
+                  registered_color[paint_number], thickness=-1)
 
-def on_release_image(start_x, start_y, end_x, end_y):
-    pass
+    tkinter_user_face.replace_image(event, image, image_type)
 
 
 def main():
-    paint_button_labels = [
-        "White",
-        "Yellow",
-        "Wall",
-        "Swampland",
-        "DepositArea",
-        "SuperArea",
-        "Red",
-        "Cyan",
-        "Black",
-    ]
-
-    parameters = {
-        "display_width": display_width,
-        "display_height": display_height,
-        "paint_button_labels": paint_button_labels,
-    }
 
     on_click_functions = {
         "on_click_paint_button": on_click_paint_button,
@@ -90,8 +106,6 @@ def main():
         "on_release_image": on_release_image,
         "on_motion_image": on_motion_image,
     }
-
-    tkinter_user_face = TkinterUserFace(parameters)
 
     tkinter_user_face.start("image 2 array", on_click_functions)
 

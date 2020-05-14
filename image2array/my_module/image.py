@@ -4,6 +4,10 @@ from PIL import Image, ImageTk
 
 
 def read_image(image_width, image_height, path="Background.bmp"):
+    return convert_cv2_to_tk(read_cv2_image(image_width, image_height, path))
+
+
+def read_cv2_image(image_width, image_height, path="Background.bmp"):
     # 画像の読み込み(BGRの順番)
     image_bgr = cv2.imread(path)
 
@@ -13,10 +17,12 @@ def read_image(image_width, image_height, path="Background.bmp"):
     # BGRからRGBに変更 参考: https://note.nkmk.me/python-opencv-bgr-rgb-cvtcolor/
     image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
 
+    return image_rgb
+
+
+def convert_cv2_to_tk(image):
     # pil形式に変換
-    image_pil = Image.fromarray(image_rgb)
+    image_pil = Image.fromarray(image)
 
     # tkinter形式に変換
-    image_tk = ImageTk.PhotoImage(image_pil)
-
-    return image_tk
+    return ImageTk.PhotoImage(image_pil)
