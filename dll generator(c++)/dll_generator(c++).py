@@ -137,6 +137,7 @@ command_options = [
     "--outhere",
     "--outcospace",
     "--no-strip",
+    "--no-lite-warming",
     "--O0",
     "--O1",
     "--O2",
